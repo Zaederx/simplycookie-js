@@ -1,0 +1,18 @@
+{
+  "name": "simplycookie-js",
+  "version": "1.0.0",
+  "description": "Simple class for generating cookie strings for you apps.",
+  "main": "js/cookie.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "javascript",
+    "typescript",
+    "cookie",
+    "cookies",
+    "simple"
+  ],
+  "author": "Zachary Ishmael",
+  "license": "GPL-3.0"
+}
