@@ -11,7 +11,15 @@
  *
  *
  */
-export class Cookie {
+export declare class Cookie {
+    name: string;
+    value: string | null;
+    domain: string;
+    path: string;
+    expires: string | Date | null;
+    secure: boolean;
+    httpOnly: boolean;
+    sameSite: string;
     /**
      *
      * @param name name of the cookie
@@ -23,43 +31,10 @@ export class Cookie {
      * @param httpOnly whether the cookie should be inaccessible to javascript
      * @param sameSite whether the cookies can be sent with cross site requests
      */
-    constructor(name, value, domain, path, expires, secure, httpOnly, sameSite) {
-        this.name = name;
-        this.value = value;
-        this.domain = domain;
-        this.path = path ? path : '/';
-        //set expiry date
-        const d = new Date();
-        const year = d.getFullYear();
-        const month = d.getMonth();
-        const day = d.getDate();
-        const twoDaysTime = day + 3;
-        this.expires = expires != null ? expires : new Date(year, month, twoDaysTime);
-        // this.size = size ? size : 
-        this.secure = secure != null ? secure : false;
-        this.httpOnly = httpOnly ? httpOnly : false;
-        this.sameSite = sameSite != null ? sameSite : 'Lax';
-    }
-    getCookieStr() {
-        var cookie = `${this.name}=${this.value};`;
-        cookie += `Domain=${this.domain};`;
-        cookie += `Path=${this.path};`;
-        cookie += `Expires=${this.expires.toUTCString()};`;
-        if (this.secure == true) {
-            cookie += 'Secure;';
-        }
-        if (this.httpOnly == true) {
-            cookie += 'HttpOnly;';
-        }
-        cookie += `SameSite=${this.sameSite};`;
-        return cookie;
-    }
-    print() {
-        console.log('\n' + `printing cookie:${this.getCookieStr()}`);
-    }
-    toString() {
-        return this.getCookieStr();
-    }
+    constructor(name: string, value: string | null, domain: string, path?: string, expires?: string | Date | null, secure?: boolean, httpOnly?: boolean, sameSite?: 'Strict' | 'Lax' | 'None' | null);
+    getCookieStr(): string;
+    print(): void;
+    toString(): string;
 }
 /**
  * Create Session Cookies with the following default properties:
@@ -72,15 +47,4 @@ export class Cookie {
  * @param value
  * @param domain
  */
-export function createSessionCookie(name, value, domain) {
-    var cname = name;
-    var cvalue = value;
-    var cdomain = domain; //which hosts can recieve a cookies
-    var path = '/';
-    var expires = null;
-    var secure = true; //i.e. use https
-    var httpOnly = true; //don't give javascript access to cookie
-    var sameSite = 'Lax'; //whether the cookies can be sent with cross site requests
-    var cookie = new Cookie(cname, cvalue, cdomain, path, expires, secure, httpOnly, sameSite);
-    return cookie;
-}
+export declare function createSessionCookie(name: string, value: string | null, domain: string): Cookie;

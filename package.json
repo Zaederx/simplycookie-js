@@ -1,8 +1,9 @@
 {
   "name": "simplycookie-js",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Simple class for generating cookie strings for you apps.",
   "main": "js/cookie.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,5 +15,13 @@
     "simple"
   ],
   "author": "Zachary Ishmael",
-  "license": "GPL-3.0"
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zaederx/simplycookie-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Zaederx/simplycookie-js/issues"
+  },
+  "homepage": "https://github.com/Zaederx/simplycookie-js#readme"
 }

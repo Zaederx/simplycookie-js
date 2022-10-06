@@ -28,7 +28,7 @@
      * @param value value of the cookie - where you store user identifation like a username (can also be stored as json string of useful information.)
      * @param domain which hosts the cookie should be sent to while browsing
      * @param path which path the must be included in the URL at the chosen domain for the cookie be sent to the host - '/' by default
-     * @param expires when the cookie should expire / be deleted from browser
+     * @param expires when the cookie should expire / be deleted from browser - 2 days time by default if not specified
      * @param secure whether to use https or not (not being http instead)
      * @param httpOnly whether the cookie should be inaccessible to javascript
      * @param sameSite whether the cookies can be sent with cross site requests
@@ -80,3 +80,30 @@
         return this.getCookieStr()
     }
 }
+
+/**
+ * Create Session Cookies with the following default properties:
+ * expires in two days (as the cookie class does by default)
+ * secure - true //use https
+ * httpOnly - true // can be accessed via javascript
+ * sameSite - Lax //whether the cookies can be sent with cross site requests
+ * 
+ * @param name 
+ * @param value 
+ * @param domain 
+ */
+ export function createSessionCookie(name:string, value:string|null, domain:string):Cookie
+ {
+     var cname = name
+     var cvalue = value
+     
+     var cdomain = domain//which hosts can recieve a cookies
+     var path = '/'
+     var expires:string|Date|null = null
+     var secure:boolean = true//i.e. use https
+     var httpOnly = true //don't give javascript access to cookie
+     var sameSite:'Strict'|'Lax'|'None' = 'Lax'//whether the cookies can be sent with cross site requests
+     var cookie = new Cookie(cname,cvalue,cdomain,path,expires,secure,httpOnly,sameSite)
+ 
+     return cookie
+ }
