@@ -1,6 +1,6 @@
 # simplycookie-js
  Class for creating cookie strings for your apps.
-
+Link to the npm package: https://www.npmjs.com/package/simplycookie-js?activeTab=readme
 
 # Usage:
 
