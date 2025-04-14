@@ -1,11 +1,11 @@
 {
   "name": "simplycookie-js",
-  "version": "1.0.3",
+  "version": "1.0.6",
   "description": "Simple class for generating cookie strings for you apps.",
   "main": "js/cookie.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsc && node js/test.js"
   },
   "keywords": [
     "javascript",
