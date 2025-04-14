@@ -77,7 +77,7 @@ export function createSessionCookie(name, value, domain) {
     var cvalue = value;
     var cdomain = domain; //which hosts can recieve a cookies
     var path = '/';
-    var expires = null;
+    var expires = 'Session';
     var secure = true; //i.e. use https
     var httpOnly = true; //don't give javascript access to cookie
     var sameSite = 'Lax'; //whether the cookies can be sent with cross site requests
