@@ -1,6 +1,6 @@
 {
   "name": "simplycookie-js",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Simple class for generating cookie strings for you apps.",
   "main": "js/cookie.js",
   "type": "module",
