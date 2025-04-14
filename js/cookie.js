@@ -62,16 +62,16 @@ export class Cookie {
     }
 }
 /**
- * Create Session Cookies with the following default properties:
- * expires in two days (as the cookie class does by default)
- * secure - true //use https
- * httpOnly - true // can be accessed via javascript
- * sameSite - Lax //whether the cookies can be sent with cross site requests
- *
- * @param name
- * @param value
- * @param domain
- */
+* Create Session Cookies with the following default properties:
+* expires in two days (as the cookie class does by default)
+* secure - true //use https
+* httpOnly - true // can be accessed via javascript
+* sameSite - Lax //whether the cookies can be sent with cross site requests
+*
+* @param name
+* @param value
+* @param domain
+*/
 export function createSessionCookie(name, value, domain) {
     var cname = name;
     var cvalue = value;
@@ -83,4 +83,98 @@ export function createSessionCookie(name, value, domain) {
     var sameSite = 'Lax'; //whether the cookies can be sent with cross site requests
     var cookie = new Cookie(cname, cvalue, cdomain, path, expires, secure, httpOnly, sameSite);
     return cookie;
+}
+/**
+*
+* @param cookies the string containing all the cookies you are looking
+* @param cookieName the name of the cookie that you are searching for in all the cookies
+* @param asArr whether to the results as an array of attributes
+*
+* Note:
+* If searching cookies from node req object.
+* Each cookie is separated by a comma `,`
+* and each attribute is separated by a semicolon `;`
+*/
+export function findCookie(cookies, cookieName, asArr = false, node = true) {
+    var cookieStr = '';
+    node ? cookieStr = findCookieNode(cookies, cookieName, asArr) : cookieStr = findCookieJS(cookies, cookieName, asArr);
+    return cookieStr;
+}
+/**
+*
+* @param cookies the string containing all the cookies you are looking
+* @param cookieName the name of the cookie that you are searching for in all the cookies
+* @param asArr whether to the results as an array of attributes
+*
+* Note:
+* If searching cookies from node req object.
+* Each cookie is separated by a comma `;`
+* and there is only the value attribute of each cookie
+*/
+export function findCookieNode(cookies, cookieName, asArr) {
+    console.log('function findCookieNode called');
+    var arrCookies = cookies.trim().split(';');
+    var cookieStrReturn = '';
+    var cookieAsArr = [];
+    for (var i = 0; i < arrCookies.length; i++) {
+        var cookieStr = arrCookies[i];
+        if (cookieStr.includes(cookieName)) {
+            if (asArr) {
+                console.log('returning cookie as array of attributes');
+                cookieAsArr = cookieStr.trim().split('=');
+                return cookieAsArr;
+            }
+            else {
+                console.log('returning cookieStr...');
+                return cookieStr;
+            }
+        }
+    }
+}
+/**
+*
+* @param cookies the string containing all the cookies you are looking
+* @param cookieName the name of the cookie that you are searching for in all the cookies
+* @param asArr whether to the results as an array of attributes
+*
+* Note:
+* If searching cookies from node req object.
+* Each cookie is separated by a comma `,`
+* and each attribute is separated by a semicolon `;`
+*/
+export function findCookieJS(cookies, cookieName, asArr) {
+    var arr = cookies.trim().split(',');
+    arr.forEach((cookieStr) => {
+        if (cookieStr.includes(cookieName)) {
+            if (asArr) {
+                var cookieAsArr = cookieStr.trim().split('=');
+                return cookieAsArr;
+            }
+            else {
+                return cookieStr;
+            }
+        }
+    });
+    return '';
+}
+/**
+* Method to find an attribute in a single cookie string
+* @param cookieStr single cookie in a strings
+* @param attribute single attribute you want the value of from the cookie
+* @return [attributeValue,cookie] - cookie returned as object with key value pairs
+*/
+export function findCookieAttribute(cookieStr, attribute) {
+    var cookie = {};
+    var attributeValue = '';
+    //split cookie into attributes
+    var attributeArr = cookieStr.trim().split(';');
+    //split attributes into key value pairs
+    attributeArr.forEach((attr) => {
+        const [key, value] = attr.trim().split('=');
+        cookie[key] = value;
+        if (key == attribute) {
+            attributeValue = value;
+        }
+    });
+    return [attributeValue, cookie];
 }
