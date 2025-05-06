@@ -54,14 +54,6 @@ export declare class Cookie {
 */
 export declare function createSessionCookie(name: string, value: string | null, domain: string): Cookie;
 /**
-*
-* @param cookies the string containing all the cookies you are looking
-* @param cookieName the name of the cookie that you are searching for in all the cookies
-* @param asArr whether to return the results as an array of attributes - default to false
-*
-*/
-export declare function findCookie(cookies: string, cookieName: string, asArr?: boolean): string | string[] | undefined;
-/**
  * Takes a string array of cookie attributes and values
  * and returns it as a string.
  * @param cookieArr array of cookie attributes
@@ -81,7 +73,7 @@ export declare function findCookieV2(cookies: string, cookieName: string, asArr?
 * @return [attributeValue,cookie] - cookie returned as an array of two strings
 * Can recieve returned array by deconstruction
 * ```
-* var [attributeValue, cookie] = findCookieAttribute(cookieStr, attribute)
+* var attributeValue = findCookieAttribute(cookieStr, attribute)
 * ```
 */
 export declare function findCookieAttribute(cookieStr: string, attribute: string): string;

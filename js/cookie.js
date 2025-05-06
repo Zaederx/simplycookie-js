@@ -111,37 +111,6 @@ export function createSessionCookie(name, value, domain) {
     return cookie;
 }
 /**
-*
-* @param cookies the string containing all the cookies you are looking
-* @param cookieName the name of the cookie that you are searching for in all the cookies
-* @param asArr whether to return the results as an array of attributes - default to false
-*
-*/
-export function findCookie(cookies, cookieName, asArr = false) {
-    console.log('function findCookie called');
-    if (cookies) { //if not null or undefined
-        var arrCookies = cookies.trim().split(';');
-        var cookieStrReturn = '';
-        var cookieAndValueArr = [];
-        for (var i = 0; i < arrCookies.length; i++) {
-            var cookieStr = arrCookies[i];
-            if (cookieStr.includes(cookieName)) {
-                if (asArr) {
-                    console.log('returning cookie as array of attributes');
-                    cookieAndValueArr = cookieStr.trim().split('=');
-                    return cookieAndValueArr;
-                }
-                else {
-                    console.log('returning cookieStr...');
-                    return cookieStr;
-                }
-            }
-        }
-    }
-    else
-        return 'string was undefined';
-}
-/**
  * Takes a string array of cookie attributes and values
  * and returns it as a string.
  * @param cookieArr array of cookie attributes
@@ -316,7 +285,7 @@ export function findCookieV2(cookies, cookieName, asArr = true) {
 * @return [attributeValue,cookie] - cookie returned as an array of two strings
 * Can recieve returned array by deconstruction
 * ```
-* var [attributeValue, cookie] = findCookieAttribute(cookieStr, attribute)
+* var attributeValue = findCookieAttribute(cookieStr, attribute)
 * ```
 */
 export function findCookieAttribute(cookieStr, attribute) {
