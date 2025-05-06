@@ -1,4 +1,4 @@
-import { findCookie, findCookieAttribute, createSessionCookie, Cookie, findCookieV2 } from "./cookie.js"; 
+import { findCookieAttribute, createSessionCookie, Cookie, findCookieV2 } from "./cookie.js"; 
 //SECTION Test 1
 const name = 'memoir'
 const value = 'd19ef599-9439-444d-9141-209a1b0fd748'
@@ -16,10 +16,10 @@ var expectedCookie = {
     sameSite: 'Lax'
   } as Cookie
   
-  if (Cookie.cookiesMatch(mCookie,expectedCookie)) {
+  if (Cookie.cookiesMatch(mCookie, expectedCookie)) {
     console.log('Test 1 - create cookie object: successful')
   }
-//_csrf=LX2sCpfX5zvK2TFKAFafxnHt;'
+
 //SECTION Test 2
 var multipleCookiesStr = 'cname1=value1;cname2=value2;cname3=value3;'+ mCookie.getCookieStr()
 const asArray = false
@@ -32,7 +32,6 @@ if (sessionCookieStr == mCookie.toString()) {
 
 //SECTION Test 3
 var expires:string = findCookieAttribute(sessionCookieStr, 'Expires')
-//@ts-ignore
 console.log('attribute - expires:',expires)
 if(expires == 'Session') {
   console.log('Test 3 - function findCookieAttribute works: Sucessful')
