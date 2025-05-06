@@ -15,22 +15,8 @@ var expectedCookie = {
     httpOnly: true,
     sameSite: 'Lax'
   } as Cookie
-  function cookiesMatch(c1:Cookie, c2:Cookie):boolean {
-    for (var attribute in c1) {
-        if (c2.hasOwnProperty(attribute)) {
-          //@ts-ignore
-            if (c1[attribute] == c2[attribute]) {
-              //continue
-            }
-            else {
-              return false
-            }
-        }
-    }
-    //return true if all that completes without returning false once
-    return true
-  }
-  if (cookiesMatch(mCookie,expectedCookie)) {
+  
+  if (Cookie.cookiesMatch(mCookie,expectedCookie)) {
     console.log('Test 1 - create cookie object: successful')
   }
 //_csrf=LX2sCpfX5zvK2TFKAFafxnHt;'
@@ -45,8 +31,9 @@ if (sessionCookieStr == mCookie.toString()) {
 }
 
 //SECTION Test 3
-if (sessionCookieStr == mCookie.toString())
-var [attribute, cookie] = findCookieAttribute(sessionCookieStr, 'expiry')
+var expires:string = findCookieAttribute(sessionCookieStr, 'Expires')
 //@ts-ignore
-console.log('attribute:',attribute, '\n', 'cookie:',cookie)
-
+console.log('attribute - expires:',expires)
+if(expires == 'Session') {
+  console.log('Test 3 - function findCookieAttribute works: Sucessful')
+}

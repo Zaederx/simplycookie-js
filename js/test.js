@@ -1,4 +1,4 @@
-import { findCookieAttribute, createSessionCookie, findCookieV2 } from "./cookie.js";
+import { findCookieAttribute, createSessionCookie, Cookie, findCookieV2 } from "./cookie.js";
 //SECTION Test 1
 const name = 'memoir';
 const value = 'd19ef599-9439-444d-9141-209a1b0fd748';
@@ -15,22 +15,7 @@ var expectedCookie = {
     httpOnly: true,
     sameSite: 'Lax'
 };
-function cookiesMatch(c1, c2) {
-    for (var attribute in c1) {
-        if (c2.hasOwnProperty(attribute)) {
-            //@ts-ignore
-            if (c1[attribute] == c2[attribute]) {
-                //continue
-            }
-            else {
-                return false;
-            }
-        }
-    }
-    //return true if all that completes without returning false once
-    return true;
-}
-if (cookiesMatch(mCookie, expectedCookie)) {
+if (Cookie.cookiesMatch(mCookie, expectedCookie)) {
     console.log('Test 1 - create cookie object: successful');
 }
 //_csrf=LX2sCpfX5zvK2TFKAFafxnHt;'
@@ -44,7 +29,10 @@ if (sessionCookieStr == mCookie.toString()) {
     console.log('Test 2 - Find cookie in string: Successful');
 }
 //SECTION Test 3
-if (sessionCookieStr == mCookie.toString())
-    var [attribute, cookie] = findCookieAttribute(sessionCookieStr, 'expiry');
+// if (sessionCookieStr == mCookie.toString())
+var expires = findCookieAttribute(sessionCookieStr, 'Expires');
 //@ts-ignore
-console.log('attribute:', attribute, '\n', 'cookie:', cookie);
+console.log('attribute - expires:', expires);
+if (expires == 'Session') {
+    console.log('Test 3: Sucessful - function findCookieAttribute works');
+}
