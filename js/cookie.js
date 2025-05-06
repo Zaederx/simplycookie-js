@@ -71,6 +71,21 @@ export class Cookie {
     toString() {
         return this.getCookieStr();
     }
+    static cookiesMatch(c1, c2) {
+        for (var attribute in c1) {
+            if (c2.hasOwnProperty(attribute)) {
+                //@ts-ignore
+                if (c1[attribute] == c2[attribute]) {
+                    //continue
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        //return true if all that completes without returning false once
+        return true;
+    }
 }
 /**
 * Creates a default session cookie with the following default properties:
@@ -132,7 +147,7 @@ export function findCookie(cookies, cookieName, asArr = false) {
  * @param cookieArr array of cookie attributes
  * @returns
  */
-function cookieArrToString(cookieArr) {
+export function cookieArrToString(cookieArr) {
     var cookieStr = '';
     for (var i = 0; i < cookieArr.length; i++) {
         cookieStr += cookieArr[i] + ';';
@@ -298,7 +313,11 @@ export function findCookieV2(cookies, cookieName, asArr = true) {
 * Method to find an attribute in a single cookie string
 * @param cookieStr single cookie in a strings
 * @param attribute single attribute you want the value of from the cookie
-* @return [attributeValue,cookie] - cookie returned as object with key value pairs
+* @return [attributeValue,cookie] - cookie returned as an array of two strings
+* Can recieve returned array by deconstruction
+* ```
+* var [attributeValue, cookie] = findCookieAttribute(cookieStr, attribute)
+* ```
 */
 export function findCookieAttribute(cookieStr, attribute) {
     var cookie = {};
@@ -309,13 +328,18 @@ export function findCookieAttribute(cookieStr, attribute) {
         //split attributes into key value pairs
         attributeArr.forEach((attr) => {
             const [key, value] = attr.trim().split('=');
-            cookie[key] = value;
+            if (key == 'Secure' || key == 'HttpOnly') {
+                cookie[key] = true;
+            }
+            else {
+                cookie[key] = value;
+            }
             if (key == attribute) {
                 attributeValue = value;
             }
         });
-        return [attributeValue, cookie];
+        return attributeValue;
     }
     var message = 'cookieStr was empty';
-    return [message, message];
+    return message;
 }

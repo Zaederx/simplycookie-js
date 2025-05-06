@@ -39,6 +39,7 @@ export declare class Cookie {
     getCookieStr(): string;
     print(): void;
     toString(): string;
+    static cookiesMatch(c1: Cookie, c2: Cookie): boolean;
 }
 /**
 * Creates a default session cookie with the following default properties:
@@ -61,6 +62,13 @@ export declare function createSessionCookie(name: string, value: string | null, 
 */
 export declare function findCookie(cookies: string, cookieName: string, asArr?: boolean): string | string[] | undefined;
 /**
+ * Takes a string array of cookie attributes and values
+ * and returns it as a string.
+ * @param cookieArr array of cookie attributes
+ * @returns
+ */
+export declare function cookieArrToString(cookieArr: string[]): string;
+/**
  * Will take a list of cookies and isolate
  * one specific cookie and its attributes.
  * @param cookies list of cookies in a string.
@@ -70,6 +78,10 @@ export declare function findCookieV2(cookies: string, cookieName: string, asArr?
 * Method to find an attribute in a single cookie string
 * @param cookieStr single cookie in a strings
 * @param attribute single attribute you want the value of from the cookie
-* @return [attributeValue,cookie] - cookie returned as object with key value pairs
+* @return [attributeValue,cookie] - cookie returned as an array of two strings
+* Can recieve returned array by deconstruction
+* ```
+* var [attributeValue, cookie] = findCookieAttribute(cookieStr, attribute)
+* ```
 */
-export declare function findCookieAttribute(cookieStr: string, attribute: string): string[];
+export declare function findCookieAttribute(cookieStr: string, attribute: string): string;
