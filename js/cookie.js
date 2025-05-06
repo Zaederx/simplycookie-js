@@ -34,7 +34,17 @@ export class Cookie {
         const month = d.getMonth();
         const day = d.getDate();
         const twoDaysTime = day + 3;
-        this.expires = expires != null ? expires : new Date(year, month, twoDaysTime);
+        //@ts-ignore
+        if (typeof expires === Date) {
+            this.expires = expires.toUTCString();
+        }
+        //@ts-ignore
+        else if (typeof expires === 'string') {
+            this.expires = expires;
+        }
+        else {
+            this.expires = new Date(year, month, twoDaysTime).toUTCString();
+        }
         // this.size = size ? size : 
         this.secure = secure != null ? secure : false;
         this.httpOnly = httpOnly ? httpOnly : false;
@@ -44,7 +54,8 @@ export class Cookie {
         var cookie = `${this.name}=${this.value};`;
         cookie += `Domain=${this.domain};`;
         cookie += `Path=${this.path};`;
-        cookie += `Expires=${this.expires.toUTCString()};`;
+        //@ts-ignore
+        cookie += `Expires=${this.expires};`;
         if (this.secure == true) {
             cookie += 'Secure;';
         }
@@ -62,7 +73,7 @@ export class Cookie {
     }
 }
 /**
-* Create Session Cookies with the following default properties:
+* Creates a default session cookie with the following default properties:
 * expires in two days (as the cookie class does by default)
 * secure - true //use https
 * httpOnly - true // can be accessed via javascript
@@ -88,74 +99,200 @@ export function createSessionCookie(name, value, domain) {
 *
 * @param cookies the string containing all the cookies you are looking
 * @param cookieName the name of the cookie that you are searching for in all the cookies
-* @param asArr whether to the results as an array of attributes
+* @param asArr whether to return the results as an array of attributes - default to false
 *
-* Note:
-* If searching cookies from node req object.
-* Each cookie is separated by a comma `,`
-* and each attribute is separated by a semicolon `;`
 */
-export function findCookie(cookies, cookieName, asArr = false, node = true) {
-    var cookieStr = '';
-    node ? cookieStr = findCookieNode(cookies, cookieName, asArr) : cookieStr = findCookieJS(cookies, cookieName, asArr);
-    return cookieStr;
-}
-/**
-*
-* @param cookies the string containing all the cookies you are looking
-* @param cookieName the name of the cookie that you are searching for in all the cookies
-* @param asArr whether to the results as an array of attributes
-*
-* Note:
-* If searching cookies from node req object.
-* Each cookie is separated by a comma `;`
-* and there is only the value attribute of each cookie
-*/
-export function findCookieNode(cookies, cookieName, asArr) {
-    console.log('function findCookieNode called');
-    var arrCookies = cookies.trim().split(';');
-    var cookieStrReturn = '';
-    var cookieAsArr = [];
-    for (var i = 0; i < arrCookies.length; i++) {
-        var cookieStr = arrCookies[i];
-        if (cookieStr.includes(cookieName)) {
-            if (asArr) {
-                console.log('returning cookie as array of attributes');
-                cookieAsArr = cookieStr.trim().split('=');
-                return cookieAsArr;
-            }
-            else {
-                console.log('returning cookieStr...');
-                return cookieStr;
+export function findCookie(cookies, cookieName, asArr = false) {
+    console.log('function findCookie called');
+    if (cookies) { //if not null or undefined
+        var arrCookies = cookies.trim().split(';');
+        var cookieStrReturn = '';
+        var cookieAndValueArr = [];
+        for (var i = 0; i < arrCookies.length; i++) {
+            var cookieStr = arrCookies[i];
+            if (cookieStr.includes(cookieName)) {
+                if (asArr) {
+                    console.log('returning cookie as array of attributes');
+                    cookieAndValueArr = cookieStr.trim().split('=');
+                    return cookieAndValueArr;
+                }
+                else {
+                    console.log('returning cookieStr...');
+                    return cookieStr;
+                }
             }
         }
     }
+    else
+        return 'string was undefined';
 }
 /**
-*
-* @param cookies the string containing all the cookies you are looking
-* @param cookieName the name of the cookie that you are searching for in all the cookies
-* @param asArr whether to the results as an array of attributes
-*
-* Note:
-* If searching cookies from node req object.
-* Each cookie is separated by a comma `,`
-* and each attribute is separated by a semicolon `;`
-*/
-export function findCookieJS(cookies, cookieName, asArr) {
-    var arr = cookies.trim().split(',');
-    arr.forEach((cookieStr) => {
-        if (cookieStr.includes(cookieName)) {
-            if (asArr) {
-                var cookieAsArr = cookieStr.trim().split('=');
-                return cookieAsArr;
-            }
-            else {
-                return cookieStr;
+ * Takes a string array of cookie attributes and values
+ * and returns it as a string.
+ * @param cookieArr array of cookie attributes
+ * @returns
+ */
+function cookieArrToString(cookieArr) {
+    var cookieStr = '';
+    for (var i = 0; i < cookieArr.length; i++) {
+        cookieStr += cookieArr[i] + ';';
+    }
+    return cookieStr;
+}
+/**
+ * Will take a list of cookies and isolate
+ * one specific cookie and its attributes.
+ * @param cookies list of cookies in a string.
+ */
+export function findCookieV2(cookies, cookieName, asArr = true) {
+    if (cookies.length == 0) {
+        return [];
+    }
+    //split the cookies into their attributes and values
+    const attributesAndValues = cookies.split(';');
+    const cookieAttributes = ['Domain', 'Expires', 'HttpOnly', 'Max-Age', 'Partitioned', 'Path', 'Secure', 'SameSite'];
+    //if there's an empty 
+    if (attributesAndValues.length == 0) {
+        if (asArr)
+            return [];
+        else
+            return '';
+    }
+    //handle array of one item
+    if (attributesAndValues.length == 1) {
+        if (asArr) {
+            return attributesAndValues;
+        }
+        else {
+            return attributesAndValues[1];
+        }
+    }
+    //handle array of 2 items
+    if (attributesAndValues.length == 2) {
+        //check if item 0 has/is the cookie we're searching for
+        if (attributesAndValues[0].includes(cookieName)) {
+            //check whether the next item is an attribute of the same cookie or is another cookie
+            for (var i = 0; i < cookieAttributes.length; i++) {
+                if (attributesAndValues[1].includes(cookieAttributes[i])) {
+                    //return the cookie (already in it's attribute segements)
+                    if (asArr) {
+                        return attributesAndValues;
+                    }
+                    else {
+                        return cookieArrToString(attributesAndValues);
+                    }
+                }
             }
         }
-    });
-    return '';
+        //if the first item wasn't the cookie, check the second
+        else if (attributesAndValues[1].includes(cookieName)) {
+            //return array with single cookie attribute (the name and it's value)
+            if (asArr)
+                return [attributesAndValues[1]];
+            else
+                return attributesAndValues[1];
+        }
+    }
+    /**
+     * Index of the cookie we are looking for.
+     */
+    var c1Index = 0;
+    /**
+     * Index of the first cookie that follows the one
+     * we are looking for.
+     */
+    var c2Index = 0;
+    /**
+     * An array of the attributes of the cookie
+     * that we are looking for.
+     */
+    var cookieArr = [];
+    /** Cookie 1 Found
+     * whether you found the cookie with the mathcing cookieName.
+     * */
+    var c1Found = false; //
+    //try to locate the name of a cookie
+    for (var i = 0; i < attributesAndValues.length; i++) {
+        //get one attribute and value pair
+        var currentAttr = attributesAndValues[i];
+        //check if it has the cookie name
+        if (currentAttr.includes(cookieName)) {
+            c1Found = true;
+            c1Index = i;
+            break;
+        }
+    }
+    //if there is no mathcing cookie in the array
+    if (!c1Found) {
+        console.log('cookie not found.');
+        if (asArr) {
+            return [];
+        }
+        else {
+            return '';
+        }
+    }
+    //if the cookieName was found & another index exists after the cookie
+    if (c1Found && c1Index + 1 < attributesAndValues.length) {
+        console.log('function findCookiev2 - attributesAndValues:', attributesAndValues);
+        //then locate the next cookie (everything before the next cookie is part of the first located cookie)
+        for (var i = c1Index + 1; i < attributesAndValues.length; i++) {
+            var currentAttr = attributesAndValues[i];
+            var matchesOneStandardAttribute = false;
+            console.log('currentAttr:', currentAttr);
+            for (var j = 0; j < cookieAttributes.length; j++) {
+                //check if current attribute and value is a standard cookie attribute
+                //if not it's the next cookie
+                if (currentAttr.includes(cookieAttributes[j])) {
+                    matchesOneStandardAttribute = true;
+                }
+            }
+            /**
+             * If after checking the attributes and it's not one,
+             * then it's another cookie. So we need to save it's
+             * index and stop searching for more of cookie-1's
+             * attributes.
+             */
+            if (!matchesOneStandardAttribute) {
+                //it's a new cookie
+                c2Index = i;
+                break;
+            }
+        }
+        //Find all the attributes of cookie one and put them into an array
+        if (c1Index < c2Index) {
+            for (var i = c1Index; i < c2Index; i++) {
+                cookieArr.push(attributesAndValues[i]);
+            }
+            if (asArr) {
+                return cookieArr;
+            }
+            else {
+                return cookieArrToString(cookieArr);
+            }
+        }
+        //if there is no second cookie - add all items till end of array
+        else {
+            for (var i = c1Index; i < attributesAndValues.length; i++) {
+                cookieArr.push(attributesAndValues[i]);
+            }
+            if (asArr) {
+                return cookieArr;
+            }
+            else {
+                return cookieArrToString(cookieArr);
+            }
+        }
+    }
+    else { //if the cookies index is the last element of the array
+        if (asArr) {
+            return [attributesAndValues[c1Index]];
+        }
+        else {
+            return attributesAndValues[c1Index];
+        }
+    }
+    return [];
 }
 /**
 * Method to find an attribute in a single cookie string
@@ -166,15 +303,19 @@ export function findCookieJS(cookies, cookieName, asArr) {
 export function findCookieAttribute(cookieStr, attribute) {
     var cookie = {};
     var attributeValue = '';
-    //split cookie into attributes
-    var attributeArr = cookieStr.trim().split(';');
-    //split attributes into key value pairs
-    attributeArr.forEach((attr) => {
-        const [key, value] = attr.trim().split('=');
-        cookie[key] = value;
-        if (key == attribute) {
-            attributeValue = value;
-        }
-    });
-    return [attributeValue, cookie];
+    if (cookieStr) {
+        //split cookie into attributes
+        var attributeArr = cookieStr.trim().split(';');
+        //split attributes into key value pairs
+        attributeArr.forEach((attr) => {
+            const [key, value] = attr.trim().split('=');
+            cookie[key] = value;
+            if (key == attribute) {
+                attributeValue = value;
+            }
+        });
+        return [attributeValue, cookie];
+    }
+    var message = 'cookieStr was empty';
+    return [message, message];
 }

@@ -15,8 +15,12 @@ export declare class Cookie {
     name: string;
     value: string | null;
     domain: string;
+    /**
+     * "the path that must exist in the requested URL for the browser to send the Cookie header" -
+     * https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie#pathpath-value
+     */
     path: string;
-    expires: string | Date | null;
+    expires: string;
     secure: boolean;
     httpOnly: boolean;
     sameSite: string;
@@ -37,7 +41,7 @@ export declare class Cookie {
     toString(): string;
 }
 /**
-* Create Session Cookies with the following default properties:
+* Creates a default session cookie with the following default properties:
 * expires in two days (as the cookie class does by default)
 * secure - true //use https
 * httpOnly - true // can be accessed via javascript
@@ -52,42 +56,20 @@ export declare function createSessionCookie(name: string, value: string | null, 
 *
 * @param cookies the string containing all the cookies you are looking
 * @param cookieName the name of the cookie that you are searching for in all the cookies
-* @param asArr whether to the results as an array of attributes
+* @param asArr whether to return the results as an array of attributes - default to false
 *
-* Note:
-* If searching cookies from node req object.
-* Each cookie is separated by a comma `,`
-* and each attribute is separated by a semicolon `;`
 */
-export declare function findCookie(cookies: string, cookieName: string, asArr?: boolean, node?: boolean): string[] | string | undefined;
+export declare function findCookie(cookies: string, cookieName: string, asArr?: boolean): string | string[] | undefined;
 /**
-*
-* @param cookies the string containing all the cookies you are looking
-* @param cookieName the name of the cookie that you are searching for in all the cookies
-* @param asArr whether to the results as an array of attributes
-*
-* Note:
-* If searching cookies from node req object.
-* Each cookie is separated by a comma `;`
-* and there is only the value attribute of each cookie
-*/
-export declare function findCookieNode(cookies: string, cookieName: string, asArr: boolean): string | string[] | undefined;
-/**
-*
-* @param cookies the string containing all the cookies you are looking
-* @param cookieName the name of the cookie that you are searching for in all the cookies
-* @param asArr whether to the results as an array of attributes
-*
-* Note:
-* If searching cookies from node req object.
-* Each cookie is separated by a comma `,`
-* and each attribute is separated by a semicolon `;`
-*/
-export declare function findCookieJS(cookies: string, cookieName: string, asArr: boolean): string;
+ * Will take a list of cookies and isolate
+ * one specific cookie and its attributes.
+ * @param cookies list of cookies in a string.
+ */
+export declare function findCookieV2(cookies: string, cookieName: string, asArr?: boolean): string[] | string;
 /**
 * Method to find an attribute in a single cookie string
 * @param cookieStr single cookie in a strings
 * @param attribute single attribute you want the value of from the cookie
 * @return [attributeValue,cookie] - cookie returned as object with key value pairs
 */
-export declare function findCookieAttribute(cookieStr: string, attribute: string): any[];
+export declare function findCookieAttribute(cookieStr: string, attribute: string): string[];
