@@ -65,7 +65,7 @@ export declare function cookieArrToString(cookieArr: string[]): string;
  * one specific cookie and its attributes.
  * @param cookies list of cookies in a string.
  */
-export declare function findCookieV2(cookies: string, cookieName: string, asArr?: boolean): string[] | string;
+export declare function findCookieV2(cookies: string, cookieName: string, asArr?: boolean, log?: boolean): string[] | string;
 /**
 * Method to find an attribute in a single cookie string
 * @param cookieStr single cookie in a strings

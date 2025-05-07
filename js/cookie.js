@@ -1,3 +1,4 @@
+import { printFormatted } from "printformatted-js";
 /**
  * Class for representing and creating cookies.
  * Cookies are essentially just strings with information separated by
@@ -128,12 +129,24 @@ export function cookieArrToString(cookieArr) {
  * one specific cookie and its attributes.
  * @param cookies list of cookies in a string.
  */
-export function findCookieV2(cookies, cookieName, asArr = true) {
+export function findCookieV2(cookies, cookieName, asArr = true, log = false) {
+    //SECTION set up and handling edge cases
+    if (log)
+        printFormatted('blue', 'findCookieV2 function called');
     if (cookies.length == 0) {
         return [];
     }
     //split the cookies into their attributes and values
+    /**
+     * All cookie the cookie attributes and values from the
+     * 'cookies' string
+     */
     const attributesAndValues = cookies.split(';');
+    if (log)
+        printFormatted('yellow', 'All cookie attributes and values:', attributesAndValues);
+    /**
+     * All the standar cookie attributes.
+     */
     const cookieAttributes = ['Domain', 'Expires', 'HttpOnly', 'Max-Age', 'Partitioned', 'Path', 'Secure', 'SameSite'];
     //if there's an empty 
     if (attributesAndValues.length == 0) {
@@ -177,6 +190,7 @@ export function findCookieV2(cookies, cookieName, asArr = true) {
                 return attributesAndValues[1];
         }
     }
+    //SECTION try to locate the name of the cookie
     /**
      * Index of the cookie we are looking for.
      */
@@ -195,7 +209,10 @@ export function findCookieV2(cookies, cookieName, asArr = true) {
      * whether you found the cookie with the mathcing cookieName.
      * */
     var c1Found = false; //
-    //try to locate the name of a cookie
+    if (log) {
+        printFormatted('yellow', 'searching for cookie with name:', cookieName);
+    }
+    //try to locate the name of the cookie
     for (var i = 0; i < attributesAndValues.length; i++) {
         //get one attribute and value pair
         var currentAttr = attributesAndValues[i];
@@ -203,12 +220,15 @@ export function findCookieV2(cookies, cookieName, asArr = true) {
         if (currentAttr.includes(cookieName)) {
             c1Found = true;
             c1Index = i;
+            if (log) {
+                printFormatted('yellow', `cookie named "${cookieName}" found`);
+            }
             break;
         }
     }
     //if there is no mathcing cookie in the array
     if (!c1Found) {
-        console.log('cookie not found.');
+        printFormatted('red', 'Cookie not found.');
         if (asArr) {
             return [];
         }
@@ -216,14 +236,18 @@ export function findCookieV2(cookies, cookieName, asArr = true) {
             return '';
         }
     }
-    //if the cookieName was found & another index exists after the cookie
+    //SECTION if the cookieName was found & another index exists after the cookie
     if (c1Found && c1Index + 1 < attributesAndValues.length) {
-        console.log('function findCookiev2 - attributesAndValues:', attributesAndValues);
         //then locate the next cookie (everything before the next cookie is part of the first located cookie)
+        if (log) {
+            printFormatted('yellow', 'searching for the next cookie...');
+        }
         for (var i = c1Index + 1; i < attributesAndValues.length; i++) {
             var currentAttr = attributesAndValues[i];
             var matchesOneStandardAttribute = false;
-            console.log('currentAttr:', currentAttr);
+            if (log) {
+                printFormatted('yellow', 'currentAttr:', currentAttr);
+            }
             for (var j = 0; j < cookieAttributes.length; j++) {
                 //check if current attribute and value is a standard cookie attribute
                 //if not it's the next cookie
@@ -240,10 +264,15 @@ export function findCookieV2(cookies, cookieName, asArr = true) {
             if (!matchesOneStandardAttribute) {
                 //it's a new cookie
                 c2Index = i;
+                if (log)
+                    printFormatted('yellow', 'Second cookie found.');
                 break;
             }
         }
-        //Find all the attributes of cookie one and put them into an array
+        //SECTION Find all the attributes of cookie one and put them into an array
+        if (log) {
+            printFormatted('yellow', `putting all attributes and values into array from c1Index (${c1Index})to c2Index (${c2Index})...`);
+        }
         if (c1Index < c2Index) {
             for (var i = c1Index; i < c2Index; i++) {
                 cookieArr.push(attributesAndValues[i]);
@@ -276,7 +305,6 @@ export function findCookieV2(cookies, cookieName, asArr = true) {
             return attributesAndValues[c1Index];
         }
     }
-    return [];
 }
 /**
 * Method to find an attribute in a single cookie string
