@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/Zaederx/simplycookie-js/issues"
   },
-  "homepage": "https://github.com/Zaederx/simplycookie-js#readme"
+  "homepage": "https://github.com/Zaederx/simplycookie-js#readme",
+  "dependencies": {
+    "printformatted-js": "^2.0.8"
+  }
 }
